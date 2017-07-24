@@ -1,0 +1,15 @@
+require 'yaml'
+base_dir = File.expand_path(File.dirname(__FILE__))
+conf = YAML.load_file(File.join(base_dir, "vms.yml"))
+
+Vagrant.configure("2") do |config|
+  config.vm.define "master" do |master|
+    master.vm.box = conf["box"]
+  end
+
+  for i in 1..conf["slaves"] do
+    config.vm.define "slave#{i}" do |slave|
+      slave.vm.box = conf["box"]
+    end
+  end
+end
