@@ -5,11 +5,13 @@ conf = YAML.load_file(File.join(base_dir, "vms.yml"))
 Vagrant.configure("2") do |config|
   config.vm.define "master" do |master|
     master.vm.box = conf["box"]
+    master.vm.network "private_network", ip: "192.168.56.101"
   end
 
   for i in 1..conf["slaves"] do
     config.vm.define "slave#{i}" do |slave|
       slave.vm.box = conf["box"]
+      slave.vm.network "private_network", ip: "192.168.56.10#{i+1}"
     end
   end
 end
