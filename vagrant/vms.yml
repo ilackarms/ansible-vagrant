@@ -1,2 +1,4 @@
+# VM configuration
+---
 box: "centos/7"
 slaves: 2
