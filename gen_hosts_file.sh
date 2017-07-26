@@ -19,7 +19,7 @@ echo [master] && \
 get_ip_via_ssh master && \
 echo "" &&
 echo [slaves] && \
-slaves=$(cat vms.yml | python /usr/lib/python2.7/site-packages/yq/__main__.py .slaves) && \
+slaves=$(cat cluster.yml | python /usr/lib/python2.7/site-packages/yq/__main__.py .slaves) && \
 for i in $(seq 1 ${slaves}); do
     get_ip_via_ssh slave$i
 done && \
