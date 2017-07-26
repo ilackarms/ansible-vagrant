@@ -15,12 +15,24 @@ get_ip_via_ssh() {
 }
 
 cd vagrant && \
-echo [master] && \
-get_ip_via_ssh master && \
-echo "" &&
-echo [slaves] && \
-slaves=$(cat cluster.yml | python /usr/lib/python2.7/site-packages/yq/__main__.py .slaves) && \
-for i in $(seq 1 ${slaves}); do
-    get_ip_via_ssh slave$i
+cat > tmphostsfile <<EOF
+[OSEv3:children]
+masters
+nodes
+
+[OSEv3:vars]
+ansible_ssh_user=vagrant
+deployment_type=origin
+
+[masters]
+EOF
+get_ip_via_ssh master >> tmphostsfile && \
+echo "" >> tmphostsfile
+echo [nodes] >> tmphostsfile
+nodes=$(cat cluster.yml | python /usr/lib/python2.7/site-packages/yq/__main__.py .nodes) && \
+for i in $(seq 1 ${nodes}); do
+    get_ip_via_ssh node$i >> tmphostsfile
 done && \
+cat tmphostsfile && \
+rm tmphostsfile && \
 cd ..

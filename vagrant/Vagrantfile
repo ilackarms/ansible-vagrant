@@ -2,10 +2,10 @@ require 'yaml'
 base_dir = File.expand_path(File.dirname(__FILE__))
 cluster = YAML.load_file(File.join(base_dir, "cluster.yml"))
 
-def slave config, cluster, i
-  config.vm.define "slave#{i}" do |slave|
-    slave.vm.box = cluster["box"]
-    slave.vm.network "private_network", ip: "192.168.56.10#{i+1}"
+def node config, cluster, i
+  config.vm.define "node#{i}" do |node|
+    node.vm.box = cluster["box"]
+    node.vm.network "private_network", ip: "192.168.56.10#{i+1}"
   end
 end
 
@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
     master.vm.network "private_network", ip: "192.168.56.101"
   end
 
-  for i in 1..cluster["slaves"] do
-    slave config, cluster, i
+  for i in 1..cluster["nodes"] do
+    node config, cluster, i
   end
 end
