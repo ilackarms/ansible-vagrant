@@ -2,20 +2,21 @@ require 'yaml'
 base_dir = File.expand_path(File.dirname(__FILE__))
 cluster = YAML.load_file(File.join(base_dir, "cluster.yml"))
 
-def node config, cluster, i
-  config.vm.define "node#{i}" do |node|
-    node.vm.box = cluster["box"]
-    node.vm.network "private_network", ip: "192.168.56.10#{i+1}"
-  end
+def define_vm config, box, name, i
+    config.vm.define name do |cfg|
+      cfg.vm.box = box
+      cfg.vm.network "public_network", bridge: "wlp3s0" #, ip: "192.168.56.10#{i}"
+      cfg.vm.provision "shell", inline: "ip route del default via 10.0.2.2 dev eth0  proto static  metric 100", privileged: true
+    end
 end
 
 Vagrant.configure("2") do |config|
-  config.vm.define "master" do |master|
-    master.vm.box = cluster["box"]
-    master.vm.network "private_network", ip: "192.168.56.101"
+  vms = ["master", "etcd"]
+  for i in 1..cluster["nodes"] do
+    vms << "node#{i}"
   end
 
-  for i in 1..cluster["nodes"] do
-    node config, cluster, i
+  vms.each_with_index do |name, index|
+    define_vm config, cluster["box"], name, index
   end
 end
