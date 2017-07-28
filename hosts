@@ -1,6 +1,21 @@
-[master]
-192.168.56.101
+[OSEv3:children]
+masters
+nodes
+etcd
 
-[slaves]
-192.168.56.102
-192.168.56.103
+[OSEv3:vars]
+ansible_ssh_user=vagrant
+ansible_become=true
+deployment_type=origin
+openshift_disable_check=disk_availability,memory_availability,docker_storage,package_version
+
+[masters]
+192.168.56.100 openshift_schedulable=true openshift_ip=192.168.56.100 openshift_public_ip=192.168.56.100 openshift_public_hostname=192.168.56.100 openshift_hostname=192.168.56.100
+
+[etcd]
+192.168.56.100 openshift_schedulable=true openshift_ip=192.168.56.100 openshift_public_ip=192.168.56.100 openshift_public_hostname=192.168.56.100 openshift_hostname=192.168.56.100
+
+[nodes]
+192.168.56.100 openshift_schedulable=true openshift_ip=192.168.56.100 openshift_public_ip=192.168.56.100 openshift_public_hostname=192.168.56.100 openshift_hostname=192.168.56.100 openshift_node_labels="{'region': 'infra'}"
+192.168.56.101 openshift_schedulable=true openshift_ip=192.168.56.101 openshift_public_ip=192.168.56.101 openshift_public_hostname=192.168.56.101 openshift_hostname=192.168.56.101 openshift_node_labels="{'region': 'infra'}"
+192.168.56.102 openshift_schedulable=true openshift_ip=192.168.56.102 openshift_public_ip=192.168.56.102 openshift_public_hostname=192.168.56.102 openshift_hostname=192.168.56.102 openshift_node_labels="{'region': 'infra'}"
